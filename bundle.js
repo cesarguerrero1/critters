@@ -1,3 +1,150 @@
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+function Critter(x,y){
+    this.name = "Critter#:" + Math.floor(Math.random()*10000);
+    this.symbol = "O";
+    this.x = x;
+    this.y = y;
+    this.health = 100;
+    this.directions = {
+        0: "north-west",
+        1: "north",
+        2: "north-east",
+        3: "west",
+        4: "stand-still",
+        5: "east",
+        6: "south-west",
+        7: "south",
+        8: "south-east"
+    }
+}
+
+Critter.prototype.move = function(){
+    //The critter needs to be able to move
+    var numChoices = (Object.keys(this.directions).length - 1);
+    var chosenDirection = this.directions[Math.round(Math.random() * numChoices)];
+    return chosenDirection
+}
+
+//We are now exporting the Critter "class"
+module.exports = Critter;
+},{}],2:[function(require,module,exports){
+function Plant(x,y){
+    this.name = "Plant#:" + Math.floor(Math.random()*10000);
+    this.symbol = "*";
+    this.x = x;
+    this.y = y;
+    this.sunlightGained = 0;
+}
+
+Plant.prototype.grow = function(){
+    //The critter needs to be able to move
+}
+
+//We are now exporting the Critter "class"
+module.exports = Plant;
+},{}],3:[function(require,module,exports){
+function Predator(x,y){
+    this.name = "Predator#:" + Math.floor(Math.random()*10000);
+    this.symbol = "<";
+    this.x = x;
+    this.y = y;
+    this.health = 100;
+    this.directions = {
+        0: "north-west",
+        1: "north",
+        2: "north-east",
+        3: "west",
+        4: "stand-still",
+        5: "east",
+        6: "south-west",
+        7: "south",
+        8: "south-east"
+    }
+}
+
+Predator.prototype.move = function(){
+    //The critter needs to be able to move
+        //The critter needs to be able to move
+        var numChoices = (Object.keys(this.directions).length - 1);
+        var chosenDirection = this.directions[Math.round(Math.random() * numChoices)];
+        return chosenDirection
+}
+
+Predator.prototype.eat = function(){
+    //Eat a critter!
+}
+
+//We are now exporting the Critter "class"
+module.exports = Predator;
+},{}],4:[function(require,module,exports){
+//This version is for the browser
+
+//Grabbing DIV callout
+var statsContainer = document.getElementById("stats-container");
+var gameContainer = document.getElementById("simulation-container");
+var startButton = document.getElementsByClassName("start-button");
+var stopButton = document.getElementsByClassName("stop-button");
+var resetButton = document.getElementsByClassName("reset-button");
+
+//We need to import our modules for critter world
+var World = require('./Critter_WorldModule');
+var Critter = require('./Critter_CritterModule');
+var Plant = require('./Critter_PlantModule');
+var Predator = require('./Critter_PredatorModule');
+
+var critterWorld = new World(75, 25);
+critterWorld.build();
+
+//Disable the buttons before the game starts!
+startButton[0].disabled = true;
+stopButton[0].disabled = true;
+
+//We need to now pass the critter, plant, and predator objects to the world to populate
+var worldCreation = critterWorld.populate(Critter, Plant, Predator);
+printToScreen(worldCreation);
+
+//This starts our autonomous simulation
+function gameStart(){
+    window.setTimeout(function(){
+        stopButton[0].disabled = false;
+        game = setInterval(function(){
+                        var turnResult = critterWorld.turn();
+                        printToScreen(turnResult);
+                }, 1000) 
+    }, 3000)
+}
+
+gameStart();
+
+function printToScreen(array){
+    var worldArray = array[0]
+    var statsReadout = array[1];
+    for(var n = 0; n < worldArray.length; n++){
+        worldArray[n] = worldArray[n].join("");
+    }
+    statsContainer.innerHTML = statsReadout;
+    gameContainer.innerHTML = worldArray.join("\n");
+}
+
+startButton[0].onclick = function(){
+    gameStart();
+    alert("The game will resume in 3 seconds.")
+    startButton[0].disabled = true;
+};
+
+stopButton[0].onclick = function(){
+    alert("The simulation has been paused. Please click the Start button to resume the simulation.")
+    startButton[0].disabled = false;
+    stopButton[0].disabled = true;
+    window.clearTimeout(game);
+};
+
+resetButton[0].onclick = function(){
+    alert("You have clicked the reset button. The entire game will reload to produce a new simulation.");
+    location.reload();
+}
+
+},{"./Critter_CritterModule":1,"./Critter_PlantModule":2,"./Critter_PredatorModule":3,"./Critter_WorldModule":5}],5:[function(require,module,exports){
 //Creating the world module
 function World(width, height){
     //How big is this world?
@@ -213,3 +360,5 @@ World.prototype.refreshWorld = function(){
 
 //We are now exporting the World "class"
 module.exports = World;
+
+},{}]},{},[4]);

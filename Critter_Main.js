@@ -19,8 +19,12 @@ for(var i = 0; i < 5; i++){
 }
 
 function printToScreen(array){
-    for(var n = 0; n < array.length; n++){
-        array[n] = array[n].join("");
+    var worldArray = array[0]
+    var statsReadout = array[1];
+
+    for(var n = 0; n < worldArray.length; n++){
+        worldArray[n] = worldArray[n].join("");
     }
-    console.log(array.join("\n"));
+    console.log(statsReadout);
+    console.log(worldArray.join("\n"));
 }
