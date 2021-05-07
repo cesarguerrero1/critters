@@ -3,6 +3,7 @@ function Critter(x,y){
     this.symbol = "O";
     this.x = x;
     this.y = y;
+    this.alive = true;
     this.health = 100;
     this.directions = {
         0: "north-west",

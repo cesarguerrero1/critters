@@ -89,7 +89,7 @@ World.prototype.populate = function(critter, plant, predator){
                     currentRow[j] = newCritter.symbol;
                     this.critters.push(newCritter);
                     this.critterCount++;
-                }else if(ranNum < 4){
+                }else if(ranNum < 5){
                     //Make new predators
                     var newPredator = new predator(j, i);
                     currentRow[j] = newPredator.symbol;
@@ -100,9 +100,12 @@ World.prototype.populate = function(critter, plant, predator){
         }
         currentWorld[i] = currentRow;
     }
+
     this.currentWorld = Array.from(currentWorld);
+    var tempCurrentWorld = JSON.stringify(this.currentWorld);
+
     var statsReadout = `New Critter Simulation created! Your simulation will begin shortly... \n Stats below: \n Critters: ${this.critterCount} \n Plants: ${this.plantCount} \n Predators: ${this.predatorCount}`;
-    return [this.currentWorld, statsReadout];
+    return [JSON.parse(tempCurrentWorld), statsReadout];
 }
 
 World.prototype.turn = function(){
@@ -110,52 +113,60 @@ World.prototype.turn = function(){
     //1. Plants go first
     //2. Critters go second
     //3. Predators go last
-    var currentWorld = this.currentWorld;
 
-    this.plants.forEach(function(plant){
-        //console.log(plant.name);
-    })
+    //DO NOT USE forEach. The complexity of "this" in a forEach is not worth the saved code lines... Just realized I couldve solved this with a getter or setter
+    var plants = this.plants;
+    for(var i = 0; i < plants.length; i++){
+        var plant = plants[i];
+        plant.sunlightGained += 5;
+        if(plant.sunlightGained >= 100){
+            //Give the plant a chance to grow!
+            
+        }
+    }
     
-    //We need to ensure that the this variable is point at the right place 
-    this.critters.forEach(function(critter){
-        var validDestination = false;
-        while(validDestination == false){
-            var chosenDirection = critter.move();
-            //Once we pick a direction, see if it is valid in the world
-            var newLocation = this.prototype.validLocation(critter.x, critter.y, chosenDirection, currentWorld);
-            if(newLocation.length != 0){
-                //Change variable driving loop
-                validDestination = true
-                //Update critter X and Y
-                critter.x = newLocation[0];
-                critter.y = newLocation[1];
+    var critters = this.critters;
+    for(var i = 0; i < critters.length; i++){
+        var critter = critters[i];
+
+        //Everytime the critter moves, it loses health!
+        critter.health -= 10;
+        if(critter.health <= 0){
+            //Don't want  to  remove here because then the entire for loop is thrown off.
+            this.critterCount --;
+            critter.alive = false;
+        }else{
+            var validDestination = false;
+            while(validDestination == false){
+                var chosenDirection = critter.move();
+
+                //Once we pick a direction, see if it is valid in the world
+                var newLocation = this.validLocation(critter.x, critter.y, chosenDirection);
+
+                if(newLocation.length != 0){
+                    //Change variable driving loop
+                    validDestination = true
+
+                    //Update critter X and Y
+                    critter.x = newLocation[0];
+                    critter.y = newLocation[1];
+                }
             }
         }
-    }, World)
-    
-    this.predators.forEach(function(predator){
-        var validDestination = false;
-        while(validDestination == false){
-            var chosenDirection = predator.move();
-            //Once we pick a direction, see if it is valid in the world
-            var newLocation = this.prototype.validLocation(predator.x, predator.y, chosenDirection, currentWorld);
-            if(newLocation.length != 0){
-                //Change variable driving loop
-                validDestination = true
-                //Update critter X and Y
-                predator.x = newLocation[0];
-                predator.y = newLocation[1];
-            }
-        }
-    }, World)
+    }
+
+    var predators = this.predators;
+    for(var i = 0; i < predators.length; i++){
+        //var predator = predators[i];
+        //console.log(predator.name);
+    }
 
     //After all the turns have occurred, then we need to redo the map!
     return this.refreshWorld();
 }
 
-World.prototype.validLocation = function(organismX, organismY, chosenDirection, currentWorld){
-    //Given the weirdness of forEach, I found it easier to just directly pass in the world!
-    var currentWorld = currentWorld;
+World.prototype.validLocation = function(organismX, organismY, chosenDirection){
+
     //When any of the organisms are looking for squares the world needs to verify if they can even go there
     const directionVector = {
         "north-west": [-1,-1],
@@ -172,7 +183,8 @@ World.prototype.validLocation = function(organismX, organismY, chosenDirection, 
     var movementArray = directionVector[chosenDirection];
     var possibleLocationX = organismX + movementArray[0];
     var possibleLocationY = organismY + movementArray[1];
-    if( currentWorld[possibleLocationY][possibleLocationX] ==  " "){
+
+    if(this.currentWorld[possibleLocationY][possibleLocationX] ==  " "){
         //This means something is there so we can't move there!
         return [possibleLocationX, possibleLocationY]
     }else{
@@ -191,6 +203,13 @@ World.prototype.refreshWorld = function(){
 
     var currentWorld = Array.from(this.currentWorld);
 
+    //We need to filter out any dead organisms!
+    this.critters = this.critters.filter(function(critter){
+        return critter.alive
+    })
+
+
+    //For the organisms in the array, print them out!
     this.plants.forEach(function(plant){
         currentWorld[plant.y][plant.x] = plant.symbol
     })
@@ -205,10 +224,10 @@ World.prototype.refreshWorld = function(){
 
     //Update the current world placeholder.
     this.currentWorld = Array.from(currentWorld);
+    var tempCurrentWorld = JSON.stringify(this.currentWorld);
 
-    //Send data over in a JSON to be
     var statsReadout = `Critters:${this.critterCount} \n Plants: ${this.plantCount} \n Predators: ${this.predatorCount} \n Turn: ${this.turnCount}`;
-    return [this.currentWorld, statsReadout];
+    return [JSON.parse(tempCurrentWorld), statsReadout];
 }
 
 //We are now exporting the World "class"

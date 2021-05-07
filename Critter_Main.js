@@ -18,6 +18,17 @@ for(var i = 0; i < 5; i++){
     printToScreen(turnResult);
 }
 
+function gameStart(){
+    window.setTimeout(function(){
+        game = setInterval(function(){
+                        var turnResult = critterWorld.turn();
+                        printToScreen(turnResult);
+                }, 1000) 
+    }, 3000)
+}
+
+gameStart();
+
 function printToScreen(array){
     var worldArray = array[0]
     var statsReadout = array[1];

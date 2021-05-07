@@ -23,6 +23,8 @@ stopButton[0].disabled = true;
 //We need to now pass the critter, plant, and predator objects to the world to populate
 var worldCreation = critterWorld.populate(Critter, Plant, Predator);
 printToScreen(worldCreation);
+console.log(critterWorld.critters);
+
 
 //This starts our autonomous simulation
 function gameStart(){
@@ -31,11 +33,13 @@ function gameStart(){
         game = setInterval(function(){
                         var turnResult = critterWorld.turn();
                         printToScreen(turnResult);
+                        console.log(critterWorld.critters);
                 }, 1000) 
     }, 3000)
 }
 
 gameStart();
+
 
 function printToScreen(array){
     var worldArray = array[0]
@@ -64,3 +68,4 @@ resetButton[0].onclick = function(){
     alert("You have clicked the reset button. The entire game will reload to produce a new simulation.");
     location.reload();
 }
+
