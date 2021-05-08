@@ -3,14 +3,16 @@ function Plant(x,y){
     this.symbol = "*";
     this.x = x;
     this.y = y;
+    this.type = "plant";
     this.alive = true;
+    this.health = 200;
     this.sunlightGained = 0;
     this.directions = {
         0: "north-west",
         1: "north",
         2: "north-east",
         3: "west",
-        4: "no-growth",
+        4: "no-action",
         5: "east",
         6: "south-west",
         7: "south",
@@ -19,7 +21,9 @@ function Plant(x,y){
 }
 
 Plant.prototype.grow = function(){
-    //The critter needs to be able to move
+    var numChoices = (Object.keys(this.directions).length - 1);
+    var chosenDirection = this.directions[Math.round(Math.random() * numChoices)];
+    return chosenDirection
 }
 
 //We are now exporting the Critter "class"

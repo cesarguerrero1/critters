@@ -3,13 +3,15 @@ function Predator(x,y){
     this.symbol = "<";
     this.x = x;
     this.y = y;
+    this.type = "predator";
+    this.alive = true;
     this.health = 100;
     this.directions = {
         0: "north-west",
         1: "north",
         2: "north-east",
         3: "west",
-        4: "stand-still",
+        4: "no-action",
         5: "east",
         6: "south-west",
         7: "south",
@@ -18,15 +20,15 @@ function Predator(x,y){
 }
 
 Predator.prototype.move = function(){
-    //The critter needs to be able to move
-        //The critter needs to be able to move
-        var numChoices = (Object.keys(this.directions).length - 1);
-        var chosenDirection = this.directions[Math.round(Math.random() * numChoices)];
-        return chosenDirection
+    //Prdator needs to move!
+    var numChoices = (Object.keys(this.directions).length - 1);
+    var chosenDirection = this.directions[Math.round(Math.random() * numChoices)];
+    return chosenDirection
 }
 
 Predator.prototype.eat = function(){
     //Eat a critter!
+    this.health = 100;
 }
 
 //We are now exporting the Critter "class"

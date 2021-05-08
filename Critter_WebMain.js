@@ -13,7 +13,7 @@ var Critter = require('./Critter_CritterModule');
 var Plant = require('./Critter_PlantModule');
 var Predator = require('./Critter_PredatorModule');
 
-var critterWorld = new World(75, 25);
+var critterWorld = new World(75, 25, Critter, Plant, Predator);
 critterWorld.build();
 
 //Disable the buttons before the game starts!
@@ -21,9 +21,8 @@ startButton[0].disabled = true;
 stopButton[0].disabled = true;
 
 //We need to now pass the critter, plant, and predator objects to the world to populate
-var worldCreation = critterWorld.populate(Critter, Plant, Predator);
+var worldCreation = critterWorld.populate();
 printToScreen(worldCreation);
-console.log(critterWorld.critters);
 
 
 //This starts our autonomous simulation
@@ -33,7 +32,6 @@ function gameStart(){
         game = setInterval(function(){
                         var turnResult = critterWorld.turn();
                         printToScreen(turnResult);
-                        console.log(critterWorld.critters);
                 }, 1000) 
     }, 3000)
 }

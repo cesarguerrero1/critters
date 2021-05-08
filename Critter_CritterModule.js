@@ -3,14 +3,15 @@ function Critter(x,y){
     this.symbol = "O";
     this.x = x;
     this.y = y;
+    this.type = "critter";
     this.alive = true;
-    this.health = 100;
+    this.health = 150;
     this.directions = {
         0: "north-west",
         1: "north",
         2: "north-east",
         3: "west",
-        4: "stand-still",
+        4: "no-action",
         5: "east",
         6: "south-west",
         7: "south",
@@ -23,6 +24,11 @@ Critter.prototype.move = function(){
     var numChoices = (Object.keys(this.directions).length - 1);
     var chosenDirection = this.directions[Math.round(Math.random() * numChoices)];
     return chosenDirection
+}
+
+Critter.prototype.eat = function(){
+    //We ate a plant so reset the health
+    this.health = 150;
 }
 
 //We are now exporting the Critter "class"
